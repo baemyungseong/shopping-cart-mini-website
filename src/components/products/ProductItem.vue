@@ -11,10 +11,14 @@
     </div>
     <div class="product_actions">
       <h3>${{ price }}</h3>
-      <button @click="addToCart">ADD TO CART</button>
-      <!-- <button class="checked" @click="addToCart">
-        <span class="check-icon"></span>
-      </button> -->
+      <transition name="move-fade-button" mode="out-in">
+        <button v-if="!isAddedProduct" class="unchecked" @click="addToCart">
+          ADD TO CART
+        </button>
+        <button v-else class="checked">
+          <span class="check-icon"></span>
+        </button>
+      </transition>
     </div>
   </li>
 </template>
@@ -22,9 +26,20 @@
 <script>
 export default {
   props: ["id", "image", "name", "price", "color", "description"],
+  data() {
+    return {
+      isAdded: false,
+    };
+  },
+  computed: {
+    isAddedProduct() {
+      const cart = this.$store.getters["cart/products"];
+      return cart.find((prod) => prod.productId === this.id);
+    },
+  },
   methods: {
     addToCart() {
-      this.$store.dispatch("cart/addToCart", { id: this.id });
+      this.$store.dispatch("cart/addToCart", { productId: this.id });
     },
   },
 };
@@ -67,7 +82,7 @@ export default {
 .product_actions {
   display: flex;
   align-items: center;
-  justify-content:space-between;
+  justify-content: space-between;
 }
 
 .product_actions h3 {
@@ -75,14 +90,17 @@ export default {
 }
 
 button {
-  cursor: pointer;
-  background-color: #F6C90E;
-  color:  #303841;
+  background-color: #f6c90e;
+  color: #303841;
   padding: 1rem 1.5rem;
   border-radius: 28px;
   font-size: 16px;
   font-weight: 900;
   border: none;
+}
+
+button.unchecked {
+  cursor: pointer;
 }
 
 button.checked {
@@ -103,9 +121,24 @@ button.checked .check-icon {
   height: 1.5rem;
 }
 
-button:hover,
-button:active {
-  background-color: #F6C90E;
+button.unchecked:hover,
+button.unchecked:active {
+  background-color: #f6c90e;
   opacity: 0.8;
+}
+
+.move-fade-button-enter-from,
+.move-fade-button-leave-to {
+  opacity: 0;
+}
+.move-fade-button-enter-active {
+  transition: opacity 0.4s ease-in;
+}
+.move-fade-button-leave-active {
+  transition: opacity 0.4s ease-out;
+}
+.move-fade-button-enter-to,
+.move-fade-button-leave-from {
+  opacity: 1;
 }
 </style>

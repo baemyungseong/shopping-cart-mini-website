@@ -7,7 +7,7 @@
         <h3>${{ cartTotal }}</h3>
       </div>
     </header>
-    <ul id="cart_list">
+    <transition-group tag="ul" name="cart-list">
       <cart-item
         v-for="item in cartItems"
         :key="item.productId"
@@ -18,7 +18,7 @@
         :color="item.color"
         :qty="item.qty"
       ></cart-item>
-    </ul>
+    </transition-group>
   </base-card>
 </template>
 
@@ -49,7 +49,7 @@ export default {
 .cart_information {
   display: flex;
   align-items: center;
-  justify-content:space-between;
+  justify-content: space-between;
   color: #303841;
   margin: 16px 0 0 0;
 }
@@ -64,10 +64,39 @@ export default {
   margin: 0;
 }
 
-#cart_list {
+ul {
   list-style: none;
   padding: 0;
   overflow: scroll;
   height: 38vh;
+}
+
+.cart-list-enter-from {
+  opacity: 0;
+  scale: 0;
+}
+
+.cart-list-enter-active {
+  transition: all 1s ease-out;
+}
+
+.cart-list-enter-to,
+.cart-list-leave-from {
+  opacity: 1;
+  scale: 1.0;
+}
+
+.cart-list-leave-active {
+  transition: all 1s ease-in;
+  position: absolute;
+}
+
+.cart-list-leave-to {
+  opacity: 0;
+  scale: 0;
+}
+
+.cart-list-move {
+  transition: transform 0.8s ease;
 }
 </style>
